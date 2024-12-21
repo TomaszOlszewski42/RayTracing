@@ -26,7 +26,7 @@ internal class Program
 
         var focal_length = 1.0;
         var viewport_height = 2.0;
-        var viewport_width = viewport_height * ((double)(image_height) / image_height);
+        var viewport_width = viewport_height * ((double)(image_width) / image_height);
         var camera_center = new Point3(0, 0, 0);
 
         // Vectors across horizontal and dwon the vercial viewport edges
@@ -55,10 +55,10 @@ internal class Program
             {
                 var pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
                 var ray_direction = pixel_center - camera_center;
-                Ray r = new Ray(camera_center, ray_direction);
+                Ray r = new(camera_center, ray_direction);
 
                 Color pixel_color = Ray.RayColor(r);
-                output.WriteLine(Vec3.WriteColor(pixel_color));
+                output.WriteLine(Color.WriteColor(pixel_color));
             }
         }
 
