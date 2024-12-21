@@ -1,6 +1,6 @@
 ﻿using System.Net.WebSockets;
 
-namespace RayTracing.Vec3;
+namespace RayTracing;
 
 public class Vec3
 {
