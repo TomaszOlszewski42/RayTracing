@@ -1,7 +1,10 @@
-﻿namespace RayTracing;
+﻿using Color = RayTracing.Vec3.Vec3;
+
+namespace RayTracing;
 
 internal class Program
 {
+      
     static void Main(string[] args)
     {
         int imageHeight = 256;
@@ -14,17 +17,11 @@ internal class Program
 
         for(int i = 0; i < imageHeight; i++)
         {
+            Console.WriteLine($"Scanlines remaining: {imageHeight - i}");
             for (int j = 0; j < imageWidth; j++) 
             {
-                var r = (double)i / (imageWidth - 1);
-                var g = (double)j / (imageHeight - 1);
-                var b = 0.0;
-
-                int ir = (int)(255.999 * r);
-                int ig = (int)(255.999 * g);
-                int ib = (int)(255.999 * b);
-
-                output.WriteLine($"{ir} {ig} {ib}");
+                var pixel_color = new Color((double)j/(imageWidth -1 ), (double)i/(imageHeight -1), 0);
+                output.WriteLine(Color.WriteColor(pixel_color));
             }
         }
         
