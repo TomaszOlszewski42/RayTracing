@@ -22,6 +22,12 @@ internal class Program
         int image_height = (int)(image_width / aspect_ratio);
         image_height = (image_height < 1) ? 1 : image_height;
 
+        // World
+
+        var world = new HittableList();
+        world.Add(new Sphere(new Point3(0, 0, -1), 0.5));
+        world.Add(new Sphere(new Point3(0, -100.5, -1), 100));
+
         // Camera
 
         var focal_length = 1.0;
@@ -57,7 +63,7 @@ internal class Program
                 var ray_direction = pixel_center - camera_center;
                 Ray r = new(camera_center, ray_direction);
 
-                Color pixel_color = Ray.RayColor(r);
+                Color pixel_color = Ray.RayColor(r, world);
                 output.WriteLine(Color.WriteColor(pixel_color));
             }
         }

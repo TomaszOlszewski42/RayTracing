@@ -39,8 +39,8 @@ public class Vec3
         return ref e[i];
     }
 
-    double length_squared() => e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
-    double length() => Math.Sqrt(length_squared()); 
+    public double LengthSquared() => e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+    public double Length() => Math.Sqrt(LengthSquared());
 
     public override string ToString()
     {
@@ -49,7 +49,7 @@ public class Vec3
 
     public static double Dot(Vec3 u, Vec3 v) => u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
     public static Vec3 Cross(Vec3 u, Vec3 v) => new(u.e[1] * v.e[2] - u.e[2] * v.e[1], u.e[2] * v.e[0] - u.e[0] * v.e[2], u.e[0] * v.e[1] - u.e[1] * v.e[0]);
-    public static Vec3 UnitVector(Vec3 v) => v / v.length();
+    public static Vec3 UnitVector(Vec3 v) => v / v.Length();
 
     public static string WriteColor(Vec3 pixel_color)
     {
