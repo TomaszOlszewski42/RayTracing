@@ -5,6 +5,7 @@ namespace RayTracing;
 public class Vec3
 {
     public double[] e = new double[3];
+    public static Interval intensity = new Interval(0.0, 0.999);
 
     public Vec3(double e0, double e1, double e2)
     {
@@ -57,9 +58,9 @@ public class Vec3
         var g = pixel_color.Y;
         var b = pixel_color.Z;
 
-        int rbyte = (int)(r * 255.999);
-        int gbyte = (int)(g * 255.999);
-        int bbyte = (int)(b * 255.999);
+        int rbyte = (int)(256 * intensity.Clamp(r));
+        int gbyte = (int)(256 * intensity.Clamp(g));
+        int bbyte = (int)(256 * intensity.Clamp(b));
 
         return $"{rbyte} {gbyte} {bbyte}";
     }

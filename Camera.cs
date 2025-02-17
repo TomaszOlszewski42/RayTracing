@@ -7,18 +7,21 @@ internal class Camera
 {
     public double aspectRatio = 1.0;
     public int imageWidth = 100;
+    public int samples_per_pixel = 10;
+
     private int _imageHeight;
     private Point3 _center;
-    private Point3 pixel00_loc;
-    private Vec3 pixel_delta_u;
-    private Vec3 pixel_delta_v;
+    private Point3 _pixel00_loc;
+    private Vec3 _pixel_delta_u;
+    private Vec3 _pixel_delta_v;
+    private double _pixel_samples_scale;
 
     public Camera()
     {
         _center = new Point3();
-        pixel00_loc = new Point3();
-        pixel_delta_u = new Vec3();
-        pixel_delta_v = new Vec3();
+        _pixel00_loc = new Point3();
+        _pixel_delta_u = new Vec3();
+        _pixel_delta_v = new Vec3();
     }
 
     private void Initialize()
@@ -26,6 +29,7 @@ internal class Camera
         _imageHeight = (int)(imageWidth / aspectRatio);
         _imageHeight = (_imageHeight < 1) ? 1 : _imageHeight;
         _center = new Point3(0, 0, 0);
+        _pixel_samples_scale = 1.0 / samples_per_pixel;
 
         var focal_length = 1.0;
         var viewport_height = 2.0;
@@ -34,11 +38,11 @@ internal class Camera
         var viewport_u = new Vec3(viewport_width, 0, 0);
         var viewport_v = new Vec3(0, -viewport_height, 0);
 
-        pixel_delta_u = viewport_u / imageWidth;
-        pixel_delta_v = viewport_v / _imageHeight;
+        _pixel_delta_u = viewport_u / imageWidth;
+        _pixel_delta_v = viewport_v / _imageHeight;
 
         var viewport_upper_left = _center - new Vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
-        pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+        _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_u + _pixel_delta_v);
     }
 
     public void Render(ref HittableList world)
@@ -52,17 +56,20 @@ internal class Camera
         for (int j = 0; j < _imageHeight; j++)
         {
             Console.WriteLine($"Scanlines remaining: {_imageHeight - j}");
+
             for (int i = 0; i < imageWidth; i++)
             {
-                var pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
-                var ray_direction = pixel_center - _center;
-                Ray r = new(_center, ray_direction);
-
-                Color pixel_color = Camera.RayColor(r, world);
-                output.WriteLine(Color.WriteColor(pixel_color));
+                Color pixel_color = new Color(0, 0, 0);
+                for(int sample = 0; sample < samples_per_pixel; sample++)
+                {
+                    Ray r = GetRay(i, j);
+                    pixel_color += RayColor(r, world);
+                }
+                output.WriteLine(Color.WriteColor(pixel_color * _pixel_samples_scale));
             }
         }
-
+        output.Flush();
+        output.Close();
         Console.WriteLine("Done");
     }
 
@@ -79,4 +86,18 @@ internal class Camera
         return (1.0 - a) * (new Color(1.0, 1.0, 1.0)) + a * (new Color(0.5, 0.7, 1.0));
     }
 
+    Vec3 SampleSquare()
+    {
+        return new Vec3(Random.Shared.NextDouble() - 0.5, Random.Shared.NextDouble() - 0.5, 0);
+    }
+
+    private Ray GetRay(int i, int j)
+    {
+        var offset = SampleSquare();
+        var pixel_sample = _pixel00_loc + ((i + offset.X) * _pixel_delta_u) + ((j + offset.Y) * _pixel_delta_v);
+        var ray_origin = _center;
+        var ray_direction = pixel_sample - ray_origin;
+
+        return new Ray(ray_origin, ray_direction);
+    }
 }

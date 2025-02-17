@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RayTracing;
 
-internal class Interval
+public class Interval
 {
     public double min;
     public double max;
@@ -35,6 +35,13 @@ internal class Interval
     public bool Surrounds(double x)
     {
         return min < x && x <= max;
+    }
+
+    public double Clamp(double x)
+    {
+        if( x < min) return min;
+        if( x > max) return max;
+        return x;
     }
 }
 
