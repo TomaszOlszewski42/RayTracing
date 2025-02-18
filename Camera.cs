@@ -3,7 +3,7 @@ using Color = RayTracing.Vec3;
 
 namespace RayTracing;
 
-internal class Camera
+public class Camera
 {
     public double aspectRatio = 1.0;
     public int imageWidth = 100;
@@ -83,8 +83,16 @@ internal class Camera
         if (world.Hit(r, new Interval(0.001, float.PositiveInfinity), ref rec))
         {
             // Vec3 direction = Vec3.RandomOnHemisphere(ref rec.normal);
-            Vec3 direction = rec.normal + Vec3.RandomUnitVector();
-            return 0.5 * RayColor(new Ray(rec.p, direction), depth - 1, world);
+            //Vec3 direction = rec.normal + Vec3.RandomUnitVector();
+            //return 0.5 * RayColor(new Ray(rec.p, direction), depth - 1, world);
+
+            Ray scattered = new Ray();
+            Color attenuation = new Color();
+            if(rec.mat ==  null) return new Color(0, 0, 0);
+            if (rec.mat.Scatter(r, rec, ref attenuation, ref scattered))
+                return attenuation * RayColor(scattered, depth - 1, world);
+            return new Color(0, 0, 0);
+
         }
 
         Vec3 unit_direction = Vec3.UnitVector(r.Direction);

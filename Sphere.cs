@@ -2,15 +2,17 @@
 
 namespace RayTracing;
 
-internal class Sphere : Hittable
+public class Sphere : Hittable
 {
     private readonly Point3 _center;
     private readonly double _radius;
+    private Material _mat;
 
-    public Sphere(Point3 center, double radius)
+    public Sphere(Point3 center, double radius, Material mat)
     {
         _center = center;
         _radius = Math.Max(0, radius);
+        _mat = mat;
     }
 
     public override bool Hit(Ray r, Interval ray_t, ref HitRecord rec)
@@ -39,6 +41,7 @@ internal class Sphere : Hittable
         rec.normal = (rec.p - _center) / _radius;
         Vec3 outward_normal = (rec.p - _center) / _radius;
         rec.SetFaceNormal(r, outward_normal);
+        rec.mat = _mat;
 
         return true;
     }

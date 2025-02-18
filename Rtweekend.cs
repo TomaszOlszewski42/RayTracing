@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RayTracing;
 
-internal class Rtweekend
+public class Rtweekend
 {
     public static double Pi = 3.1415926535897932385;
 

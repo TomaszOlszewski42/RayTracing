@@ -1,4 +1,5 @@
 ﻿using System.Net.WebSockets;
+using System.Reflection.Metadata.Ecma335;
 
 namespace RayTracing;
 
@@ -28,6 +29,7 @@ public class Vec3
     public static Vec3 operator -(Vec3 v1, Vec3 v2) => new(v1.e[0] - v2.e[0], v1.e[1] - v2.e[1], v1.e[2] - v2.e[2]);
     public static Vec3 operator *(Vec3 v, double t) => new(v.e[0] * t, v.e[1] * t, v.e[2] * t);
     public static Vec3 operator *(double t, Vec3 v) => v * t;
+    public static Vec3 operator *(Vec3 u, Vec3 v) => new(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
     public static Vec3 operator /(Vec3 v, double t) => v * (1 / t);
 
     public double this[int i]
@@ -107,5 +109,16 @@ public class Vec3
             return on_unit_sphere;
         else
             return -on_unit_sphere;
+    }
+
+    public bool NearZero()
+    {
+        var s = 1e-8;
+        return (Math.Abs(e[0]) < s && Math.Abs(e[1]) < s && Math.Abs(e[2]) < s);
+    }
+
+    public static Vec3 Reflect(Vec3 v, Vec3 n)
+    {
+        return v - 2 * Dot(v, n) * n;
     }
 }

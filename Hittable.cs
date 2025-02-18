@@ -2,10 +2,11 @@
 
 namespace RayTracing;
 
-internal class HitRecord
+public class HitRecord
 {
     public Point3 p;
     public Vec3 normal;
+    public Material? mat;
     public double t;
     public bool frontFace;
 
@@ -29,7 +30,7 @@ internal class HitRecord
     }
 }
 
-internal abstract class Hittable
+public abstract class Hittable
 {
     public abstract bool Hit(Ray r, Interval ray_t, ref HitRecord rec);
 }

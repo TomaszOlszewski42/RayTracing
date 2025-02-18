@@ -3,7 +3,7 @@ using Point3 = RayTracing.Vec3;
 
 namespace RayTracing;
 
-internal class HittableList : Hittable
+public class HittableList : Hittable
 {
     public List<Hittable> HitObjects = [];
 

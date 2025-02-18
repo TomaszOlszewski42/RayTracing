@@ -2,12 +2,16 @@
 using Color = RayTracing.Vec3;
 namespace RayTracing;
 
-internal class Ray
+public class Ray
 {
     public Point3 Origin { get; }
     public Vec3 Direction { get; }
 
-    // public Ray() { }
+    public Ray() 
+    {
+        Origin = new Point3();
+        Direction = new Vec3();
+    }
     public Ray(Point3 origin, Vec3 direction)
     {
         Origin = origin;
