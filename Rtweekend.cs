@@ -14,4 +14,9 @@ internal class Rtweekend
     {
         return degrees * Pi / 180.0;
     }
+
+    public static double RandomDouble(double min, double max)
+    {
+        return Random.Shared.NextDouble() * (max - min) + min;
+    }
 }

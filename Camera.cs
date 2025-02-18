@@ -8,6 +8,7 @@ internal class Camera
     public double aspectRatio = 1.0;
     public int imageWidth = 100;
     public int samples_per_pixel = 10;
+    public int max_depth = 10;
 
     private int _imageHeight;
     private Point3 _center;
@@ -63,7 +64,7 @@ internal class Camera
                 for(int sample = 0; sample < samples_per_pixel; sample++)
                 {
                     Ray r = GetRay(i, j);
-                    pixel_color += RayColor(r, world);
+                    pixel_color += RayColor(r, max_depth, world);
                 }
                 output.WriteLine(Color.WriteColor(pixel_color * _pixel_samples_scale));
             }
@@ -73,12 +74,17 @@ internal class Camera
         Console.WriteLine("Done");
     }
 
-    private static Color RayColor(Ray r, Hittable world)
+    private static Color RayColor(Ray r, int depth, Hittable world)
     {
+        if (depth <= 0)
+            return new Color(0, 0, 0);
+
         var rec = new HitRecord();
-        if (world.Hit(r, new Interval(0, float.PositiveInfinity), ref rec))
+        if (world.Hit(r, new Interval(0.001, float.PositiveInfinity), ref rec))
         {
-            return 0.5 * (rec.normal + new Color(1, 1, 1));
+            // Vec3 direction = Vec3.RandomOnHemisphere(ref rec.normal);
+            Vec3 direction = rec.normal + Vec3.RandomUnitVector();
+            return 0.5 * RayColor(new Ray(rec.p, direction), depth - 1, world);
         }
 
         Vec3 unit_direction = Vec3.UnitVector(r.Direction);
