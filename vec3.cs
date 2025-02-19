@@ -121,4 +121,12 @@ public class Vec3
     {
         return v - 2 * Dot(v, n) * n;
     }
+
+    public static Vec3 Refract(Vec3 uv, Vec3 n, double etai_over_eta)
+    {
+        var cos_theta = Math.Min(Dot(-uv, n), 1.0);
+        Vec3 r_out_perp = etai_over_eta * (uv + cos_theta * n);
+        Vec3 r_out_parallel = -Math.Sqrt(Math.Abs(1.0 - r_out_perp.LengthSquared())) * n;
+        return r_out_perp + r_out_parallel;
+    }
 }

@@ -9,6 +9,11 @@ public class Camera
     public int imageWidth = 100;
     public int samples_per_pixel = 10;
     public int max_depth = 10;
+    
+    public double vfov = 90;
+    public Point3 lookfrom = new Point3(0, 0, 0);
+    public Point3 lookat = new Point3(0, 0, -1);
+    public Vec3 vup = new Vec3(0, 1, 0);
 
     private int _imageHeight;
     private Point3 _center;
@@ -16,6 +21,9 @@ public class Camera
     private Vec3 _pixel_delta_u;
     private Vec3 _pixel_delta_v;
     private double _pixel_samples_scale;
+    private Vec3 u;
+    private Vec3 v;
+    private Vec3 w;
 
     public Camera()
     {
@@ -32,17 +40,25 @@ public class Camera
         _center = new Point3(0, 0, 0);
         _pixel_samples_scale = 1.0 / samples_per_pixel;
 
-        var focal_length = 1.0;
-        var viewport_height = 2.0;
+        _center = lookfrom;
+
+        var focal_length = (lookfrom - lookat).Length();
+        var theta = Rtweekend.DegreesToRadians(vfov);
+        var h = Math.Tan(theta/2);
+        var viewport_height = 2 * h * focal_length;
         var viewport_width = viewport_height * ((double)imageWidth / _imageHeight);
 
-        var viewport_u = new Vec3(viewport_width, 0, 0);
-        var viewport_v = new Vec3(0, -viewport_height, 0);
+        w = Vec3.UnitVector(lookfrom - lookat);
+        u = Vec3.UnitVector(Vec3.Cross(vup, w));
+        v = Vec3.Cross(w, u);
+
+        var viewport_u = viewport_width * u;
+        var viewport_v = viewport_width * -v;
 
         _pixel_delta_u = viewport_u / imageWidth;
         _pixel_delta_v = viewport_v / _imageHeight;
 
-        var viewport_upper_left = _center - new Vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
+        var viewport_upper_left = _center - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
         _pixel00_loc = viewport_upper_left + 0.5 * (_pixel_delta_u + _pixel_delta_v);
     }
 
